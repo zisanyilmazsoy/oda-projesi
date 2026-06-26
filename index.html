@@ -49,33 +49,59 @@
 <script type="module">
   import { Application } from 'https://unpkg.com/@splinetool/runtime/build/runtime.js';
 
+  window.onerror = function(msg, url, line) {
+    console.error('GENEL HATA:', msg, 'satır:', line);
+  };
+
+  console.log('1) Script başladı, kütüphane yüklendi mi kontrol ediliyor...');
+
   const canvas = document.getElementById('canvas3d');
+  console.log('2) Canvas bulundu:', canvas);
+
   const app = new Application(canvas);
+  console.log('3) Application objesi oluşturuldu:', app);
 
-  app.load('https://prod.spline.design/bAghOHZ3b2Y7KGn8/scene.splinecode').then(() => {
+  app.load('https://prod.spline.design/bAghOHZ3b2Y7KGn8/scene.splinecode')
+    .then(() => {
+      console.log('4) SAHNE BAŞARIYLA YÜKLENDİ ✅');
 
-    const messages = {
-      "Gitar": "Keman olmadığı için gitar koydum ama normalde aktif olarak keman çalıyorum.",
-      "cay": "Herkes kahve falan der ama ben sonuna kadar çaycıyım (hatta kaçak çaycıyım).",
-      "laptop": "Bilgisayar mühendisi olduğum için bilgisayarı böbreğim gibi kendimle beraber her yere götürüyorum :)",
-      "kitap": "Kitap okumayı çok seviyorum, özellikle Rus romanlarını. Çünkü son parasını kira yerine boş şeylere veren başrollerde kendimden bir parça buluyorum.",
-      "pilates": "Spor yapmaktan nefret ederim.",
-      "hali": "Yerlerde sürünmeyi çok severim, her anlamda."
-    };
-
-    const box = document.getElementById('info-box');
-
-    app.addEventListener('mouseDown', (e) => {
-      const name = e.target ? e.target.name : null;
-      console.log('Tıklanan nesnenin ismi:', name);
-
-      if (name && messages[name]) {
-        box.textContent = messages[name];
-        box.classList.add('show');
-      } else {
-        box.classList.remove('show');
+      try {
+        console.log('5) Sahnedeki tüm nesneler:', app.getAllObjects().map(o => o.name));
+      } catch (err) {
+        console.log('5) getAllObjects çalışmadı:', err.message);
       }
+
+      const messages = {
+        "Gitar": "Keman olmadığı için gitar koydum ama normalde aktif olarak keman çalıyorum.",
+        "cay": "Herkes kahve falan der ama ben sonuna kadar çaycıyım (hatta kaçak çaycıyım).",
+        "laptop": "Bilgisayar mühendisi olduğum için bilgisayarı böbreğim gibi kendimle beraber her yere götürüyorum :)",
+        "kitap": "Kitap okumayı çok seviyorum, özellikle Rus romanlarını. Çünkü son parasını kira yerine boş şeylere veren başrollerde kendimden bir parça buluyorum.",
+        "pilates": "Spor yapmaktan nefret ederim.",
+        "hali": "Yerlerde sürünmeyi çok severim, her anlamda."
+      };
+
+      const box = document.getElementById('info-box');
+
+      app.addEventListener('mouseDown', (e) => {
+        const name = e.target ? e.target.name : null;
+        console.log('TIKLANDI -> nesne ismi:', name);
+
+        if (name && messages[name]) {
+          box.textContent = messages[name];
+          box.classList.add('show');
+        } else {
+          box.classList.remove('show');
+        }
+      });
+
+      console.log('6) Tıklama dinleyicisi kuruldu, artık nesnelere tıklayabilirsin.');
+    })
+    .catch((err) => {
+      console.error('SAHNE YÜKLENEMEDİ ❌:', err);
     });
+
+  canvas.addEventListener('pointerdown', () => {
+    console.log('(Ham canvas tıklaması algılandı)');
   });
 </script>
 
